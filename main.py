@@ -5,7 +5,7 @@ import pandas as pd
 import scipy.stats as st
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidget, QTableWidgetItem, QPushButton, \
-    QFileDialog, QLabel, QComboBox, QDoubleSpinBox, QSpinBox, QMessageBox, QWidget, QFrame
+    QFileDialog, QLabel, QComboBox, QDoubleSpinBox, QSpinBox, QMessageBox, QWidget
 
 from mplwidget import Window
 
@@ -93,7 +93,6 @@ class Windows(QMainWindow):
         self.pushbutton12.clicked.connect(self.Saqlash)
         self.pushbutton21.clicked.connect(self.yuklash)
         self.pushbutton31.clicked.connect(self.yuklash)
-
 
         # self.slider1.valueChanged.connect(self.slide_it1)
         # self.slider2.valueChanged.connect(self.slide_it2)
