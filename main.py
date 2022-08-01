@@ -13,7 +13,7 @@ from mplwidget import Window
 class Windows(QMainWindow):
     def __init__(self):
         super(Windows, self).__init__()
-        # ui faylni o'qib olish
+        
         self.params = tuple([])
         self.df = []
         self.all_data = None
@@ -26,7 +26,10 @@ class Windows(QMainWindow):
                               'lognorm', 'lomax', 'maxwell', 'mielke', 'nakagami', 'ncf', 'ncx2', 'pareto', 'powerlaw',
                               'powerlognorm', 'rayleigh', 'recipinvgauss', 'rice', 'trapezoid', 'trapz', 'triang',
                               'truncexpon', 'uniform', 'wald', 'weibull_min']
+        
+        # UI faylni o'qib olish
         uic.loadUi('ACL.ui', self)
+        
         self.setWindowTitle('ACL bahosi')
         # Kerakli ob'yektlarni yuklab olish
         self.pushbutton11 = self.findChild(QPushButton, 'pushButton11')
@@ -62,13 +65,12 @@ class Windows(QMainWindow):
         self.element = Window(self.MplWidget)
         self.element1 = Window(self.MplWidget1)
 
-        # self.linedit1.setPlaceholderText('salom')
-        self.combobox11.setPlaceholderText('jjk')
+        
+        self.combobox11.setPlaceholderText('--Tanlang--')
         self.combobox11.addItems(self.distributions)
         self.combobox31.addItems(self.distributions)
         self.combobox11.activated.connect(self.Taqsimot)
 
-        # self.pushbutton13.setEnabled(False)
         self.label13.hide()
         self.label14.hide()
         self.label15.hide()
@@ -88,7 +90,7 @@ class Windows(QMainWindow):
         self.pushbutton23.setEnabled(False)
         self.pushbutton32.setEnabled(False)
         self.pushbutton33.setEnabled(False)
-        self.spinbox11.valueChanged.connect(self.Senzura)
+        self.spinbox11.valueChanged.connect(self.Sensorship)
         self.pushbutton11.clicked.connect(self.Tanlanma)
         self.pushbutton12.clicked.connect(self.Saqlash)
         self.pushbutton21.clicked.connect(self.yuklash)
@@ -97,10 +99,10 @@ class Windows(QMainWindow):
         # self.slider1.valueChanged.connect(self.slide_it1)
         # self.slider2.valueChanged.connect(self.slide_it2)
 
-        # Show The App
+        # App ni ko'rsatish
         self.show()
 
-    def Senzura(self):
+    def Sensorship(self):
         self.spinbox12.setRange(0, int(0.8 * self.spinbox11.value()))
         self.spinbox12.setValue(0)
 
@@ -257,7 +259,7 @@ class Windows(QMainWindow):
             self.df.to_excel(path1[0])
 
         except:
-            QMessageBox.warning(self, 'Saqlahdagi xatolik!',
+            QMessageBox.warning(self, 'Saqlashdagi xatolik!',
                                 "Tanlanmani saqlamadingiz yoki saqlashda xatolikga yo'l qo'ydingiz!")
 
 
