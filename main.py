@@ -6,6 +6,7 @@ import scipy.stats as st
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidget, QTableWidgetItem, QPushButton, \
     QFileDialog, QLabel, QComboBox, QDoubleSpinBox, QSpinBox, QMessageBox, QWidget
+from statsmodels.distributions import ECDF
 
 from mplwidget import Window
 
@@ -117,12 +118,14 @@ class Windows(QMainWindow):
                 path = QFileDialog.getOpenFileName(self, "Tanlanma faylini yuklash", "",
                                                    "Excel file (*.xlsx *.xls)")[0]  # os.getenv('HOME')
                 self.all_data = pd.read_excel(path)
+                self.element1.plot1(self.all_data['T'], np.mean(self.all_data['E']))
                 self.pushbutton22.setEnabled(True)
             elif self.sender() == self.pushbutton31:
                 self.tablevieww = self.tableview3
                 path = QFileDialog.getOpenFileName(self, "Tanlanma faylini yuklash", "",
                                                    "Excel file (*.xlsx *.xls)")[0]  # os.getenv('HOME')
                 self.all_data = pd.read_excel(path)
+                self.criterion(self.all_data)
                 self.pushbutton32.setEnabled(True)
             NumRows = len(self.all_data.index)
             self.tablevieww.setColumnCount(len(self.all_data.columns))
@@ -140,6 +143,44 @@ class Windows(QMainWindow):
             self.tablevieww.clear()
             QMessageBox.warning(self, 'Yuklashdagi xatolik!',
                                 "Fayl .xlsx kengaymali emas yoki yuklashda noma'lum xatolik yuz berdi!")
+
+    def Random(self, senzur, n):
+        tetta = senzur / (n - senzur)
+        Ftanlanma = st.expon.isf(1 - st.uniform.rvs(size=n))
+        if tetta != 0:
+            Gtanlanma = st.expon.isf(np.power((1 - st.uniform.rvs(size=n)), 1 / tetta))
+        else:
+            Gtanlanma = np.full(n, np.inf)
+        E = np.zeros(n)
+        E[Ftanlanma <= Gtanlanma] = 1
+        if n - np.sum(E) == senzur:
+            T = np.fmin(Ftanlanma, Gtanlanma)
+        else:
+            self.Random(self, n)
+        return T, np.mean(E)
+
+    def criterion(self, data1):
+        print(self.combobox31.currentText())
+        dis = getattr(st, self.combobox31.currentText())
+        print(dis)
+        n = len(data1['T'])
+        TT = np.array([])
+        for i in range(5000):
+            T, pn = self.Random(n - np.sum(data1['E']), n)
+            H = ECDF(T)
+            H1 = ECDF(T, side="left")
+            Baho = lambda xx: 1 - np.power(1 - H(xx), pn)
+            Baho1 = lambda xx: 1 - np.power(1 - H1(xx), pn)
+            a = np.max(np.abs(dis.cdf(T) - Baho(T)))
+            print('salom')
+            b = np.max(np.abs(dis.cdf(T) - Baho1(T)))
+            TT = np.append(np.fmax(a, b), TT)
+        Z = (np.sqrt(n / np.log(np.log(n)))) * TT
+
+
+
+
+
 
     def Taqsimot(self):
         self.params = []
@@ -244,9 +285,9 @@ class Windows(QMainWindow):
         E[Ftanlanma <= Gtanlanma] = 1
         if n - np.sum(E) == senzur:
             T = np.fmin(Ftanlanma, Gtanlanma)
-            d = {'T': T, 'E': E,
-                 'Taqsimot': self.element.plot(T, np.mean(E), getattr(st, self.combobox11.currentText()), self.paramss,
-                                               self.loc, self.scale)}
+            abc = self.element.plot(T, np.mean(E), getattr(st, self.combobox11.currentText()), self.paramss,
+                              self.loc, self.scale)
+            d = {'T': T, 'E': E, 'distribution': abc[0], 'paramss': abc[1], 'loc': abc[2], 'scale': abc[3]}
             self.df = pd.DataFrame(d)
             self.yuklash(self.df)
 

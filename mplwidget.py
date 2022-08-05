@@ -59,7 +59,7 @@ class Window(QWidget):
         self.show()
 
     # action called by the push button
-    def plot(self, data, p, dist, param, loc, scale):
+    def plot(self, data, p, dist=0, param=(0,), loc=0, scale=1):
         # random data
         # data = [random.random() for i in range(10)]
 
@@ -88,6 +88,25 @@ class Window(QWidget):
         # refresh canvas
         self.canvas.draw()
         return '{}({} loc={}, scale={})'.format(dist.name, S, loc, scale)
+
+    def plot1(self, data, p, ):
+        # random data
+        # data = [random.random() for i in range(10)]
+
+        # clearing old figure
+        self.figure.clear()
+
+        # create an axis
+        ax = self.figure.add_subplot(111)
+
+        # plot data
+        H = ECDF(data)
+        x = np.linspace(-0.20 * max(data), 1.20 * max(data), num=3 * len(data))
+        y = 1 - np.power(1 - H(x), p)
+        ax.plot(x, y, label='ACL-baho')
+        ax.legend()
+        # refresh canvas
+        self.canvas.draw()
 
 
 # driver code
