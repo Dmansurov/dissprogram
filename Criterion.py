@@ -40,6 +40,7 @@ class Criterion:
         return self.T, np.mean(E)
 
 
+
 t = Criterion(10, 100)
 #x = np.linspace(-1, 2)
 #y = t.distribution.cdf(x)
