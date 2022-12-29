@@ -21,7 +21,7 @@ class Window(QWidget):
         matplotlib.rcParams['figure.subplot.bottom'] = 0.1
         matplotlib.rcParams['figure.subplot.right'] = 0.95
         matplotlib.rcParams['figure.subplot.top'] = 0.95
-        matplotlib.rcParams.update({'font.size': 4})
+        matplotlib.rcParams.update({'font.size': 10})
 
         # a figure instance to plot on
         self.resize(651, 551)

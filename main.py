@@ -5,19 +5,25 @@ import pandas as pd
 import scipy.stats as st
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidget, QTableWidgetItem, QPushButton, \
-    QFileDialog, QLabel, QComboBox, QDoubleSpinBox, QSpinBox, QMessageBox, QWidget
+    QFileDialog, QLabel, QComboBox, QDoubleSpinBox, QSpinBox, QMessageBox, QWidget, QPlainTextEdit
 from statsmodels.distributions import ECDF
 
+from Criterion import Criterion, Statistika_qiymati
 from mplwidget import Window
 
 
 class Windows(QMainWindow):
     def __init__(self):
         super(Windows, self).__init__()
-        
+
+        self.eee = None
+        self.senzur = None
+        self.tt = []
+        self.fx = []
         self.params = tuple([])
         self.df = []
         self.all_data = None
+        self.ECDF = []
         self.distributions = ['alpha', 'arcsine', 'argus', 'beta', 'betaprime', 'bradford', 'burr', 'burr12', 'chi',
                               'chi2', 'erlang', 'expon', 'exponpow', 'exponweib', 'f', 'fatiguelife', 'fisk',
                               'foldcauchy', 'foldnorm', 'gamma', 'gausshyper', 'genexpon', 'gengamma',
@@ -27,10 +33,10 @@ class Windows(QMainWindow):
                               'lognorm', 'lomax', 'maxwell', 'mielke', 'nakagami', 'ncf', 'ncx2', 'pareto', 'powerlaw',
                               'powerlognorm', 'rayleigh', 'recipinvgauss', 'rice', 'trapezoid', 'trapz', 'triang',
                               'truncexpon', 'uniform', 'wald', 'weibull_min']
-        
+
         # UI faylni o'qib olish
         uic.loadUi('ACL.ui', self)
-        
+
         self.setWindowTitle('ACL bahosi')
         # Kerakli ob'yektlarni yuklab olish
         self.pushbutton11 = self.findChild(QPushButton, 'pushButton11')
@@ -58,6 +64,7 @@ class Windows(QMainWindow):
         self.doublespinbox14 = self.findChild(QDoubleSpinBox, 'doubleSpinBox14')
         self.doublespinbox15 = self.findChild(QDoubleSpinBox, 'doubleSpinBox15')
         self.doublespinbox16 = self.findChild(QDoubleSpinBox, 'doubleSpinBox16')
+        self.plainText31 = self.findChild(QPlainTextEdit, 'plainTextEdit31')
         self.spinbox11 = self.findChild(QSpinBox, 'spinBox11')
         self.spinbox12 = self.findChild(QSpinBox, 'spinBox12')
         self.spinbox11.setRange(100, 10000)
@@ -66,7 +73,6 @@ class Windows(QMainWindow):
         self.element = Window(self.MplWidget)
         self.element1 = Window(self.MplWidget1)
 
-        
         self.combobox11.setPlaceholderText('--Tanlang--')
         self.combobox11.addItems(self.distributions)
         self.combobox31.addItems(self.distributions)
@@ -125,7 +131,14 @@ class Windows(QMainWindow):
                 path = QFileDialog.getOpenFileName(self, "Tanlanma faylini yuklash", "",
                                                    "Excel file (*.xlsx *.xls)")[0]  # os.getenv('HOME')
                 self.all_data = pd.read_excel(path)
-                self.criterion(self.all_data)
+                # self.criterion(self.all_data)
+                self.tt = self.all_data["T"].to_numpy()
+                self.eee = self.all_data["E"].to_numpy()
+                self.senzur = len(self.eee) - np.sum(self.eee)
+                self.plainText31.setPlainText("Iltomos, kuting. Limit taqsimot yaratilmoqda...")
+                self.fx = Criterion(self.senzur, len(self.eee))
+                statcriterion = Statistika_qiymati(self.tt, np.mean(self.eee))
+                self.plainText31.setPlainText("Qiymatdorlik darajasi {} ga teng".format(self.fx.distribution.cdf(statcriterion)))
                 self.pushbutton32.setEnabled(True)
             NumRows = len(self.all_data.index)
             self.tablevieww.setColumnCount(len(self.all_data.columns))
@@ -172,15 +185,10 @@ class Windows(QMainWindow):
             Baho = lambda xx: 1 - np.power(1 - H(xx), pn)
             Baho1 = lambda xx: 1 - np.power(1 - H1(xx), pn)
             a = np.max(np.abs(dis.cdf(T) - Baho(T)))
-            print('salom')
             b = np.max(np.abs(dis.cdf(T) - Baho1(T)))
             TT = np.append(np.fmax(a, b), TT)
         Z = (np.sqrt(n / np.log(np.log(n)))) * TT
-
-
-
-
-
+        self.ECDF = ECDF(Z)
 
     def Taqsimot(self):
         self.params = []
@@ -286,7 +294,7 @@ class Windows(QMainWindow):
         if n - np.sum(E) == senzur:
             T = np.fmin(Ftanlanma, Gtanlanma)
             abc = self.element.plot(T, np.mean(E), getattr(st, self.combobox11.currentText()), self.paramss,
-                              self.loc, self.scale)
+                                    self.loc, self.scale)
             d = {'T': T, 'E': E, 'distribution': abc[0], 'paramss': abc[1], 'loc': abc[2], 'scale': abc[3]}
             self.df = pd.DataFrame(d)
             self.yuklash(self.df)
