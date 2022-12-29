@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import scipy.stats as st
 from PyQt5 import uic
+from PyQt5.QtGui import QTextCursor
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidget, QTableWidgetItem, QPushButton, \
     QFileDialog, QLabel, QComboBox, QDoubleSpinBox, QSpinBox, QMessageBox, QWidget, QPlainTextEdit
 from statsmodels.distributions import ECDF
@@ -16,15 +17,17 @@ class Windows(QMainWindow):
     def __init__(self):
         super(Windows, self).__init__()
 
-        self.eee = None
-        self.senzur = None
-        self.tt = []
-        self.fx = []
+        self.cursor = None
+        self.eee3 = None
+        self.senzur3 = None
+        self.tt3 = []
+        self.fx3 = []
         self.params = tuple([])
         self.df = []
         self.all_data = None
         self.ECDF = []
-        self.distributions = ['alpha', 'arcsine', 'argus', 'beta', 'betaprime', 'bradford', 'burr', 'burr12', 'chi',
+        self.distributions = ['barchasi', 'alpha', 'arcsine', 'argus', 'beta', 'betaprime', 'bradford', 'burr',
+                              'burr12', 'chi',
                               'chi2', 'erlang', 'expon', 'exponpow', 'exponweib', 'f', 'fatiguelife', 'fisk',
                               'foldcauchy', 'foldnorm', 'gamma', 'gausshyper', 'genexpon', 'gengamma',
                               'genhalflogistic', 'geninvgauss', 'genpareto', 'gilbrat', 'gompertz', 'halfcauchy',
@@ -73,8 +76,7 @@ class Windows(QMainWindow):
         self.element = Window(self.MplWidget)
         self.element1 = Window(self.MplWidget1)
 
-        self.combobox11.setPlaceholderText('--Tanlang--')
-        self.combobox11.addItems(self.distributions)
+        self.combobox11.addItems(self.distributions[1:])
         self.combobox31.addItems(self.distributions)
         self.combobox11.activated.connect(self.Taqsimot)
 
@@ -102,12 +104,46 @@ class Windows(QMainWindow):
         self.pushbutton12.clicked.connect(self.Saqlash)
         self.pushbutton21.clicked.connect(self.yuklash)
         self.pushbutton31.clicked.connect(self.yuklash)
+        self.pushbutton32.clicked.connect(self.button32)
+        self.pushbutton33.clicked.connect(self.button33)
 
         # self.slider1.valueChanged.connect(self.slide_it1)
         # self.slider2.valueChanged.connect(self.slide_it2)
 
         # App ni ko'rsatish
         self.show()
+
+    def button33(self):
+        try:
+            path3 = QFileDialog.getSaveFileName(self, "Tanlanmani saqlash", "", "Text (*.txt)")
+            print(path3)
+            with open(path3[0], 'w') as yourFile:
+                yourFile.write(str(self.plainText31.toPlainText()))
+        except:
+            QMessageBox.warning(self, 'Saqlashdagi xatolik!',
+                                "Natijalarni saqlamadingiz yoki saqlashda xatolikga yo'l qo'ydingiz!")
+
+
+
+    def button32(self):
+        if self.combobox31.currentText() == 'barchasi':
+            SSS = "Taqsimot    qiymatdorlik darajasi\n"
+            for ij in range(1, 63):
+                distributi = getattr(st, self.distributions[ij])
+                params = np.ones(distributi.numargs)
+                distributio = distributi(*params)
+                statcriterion = Statistika_qiymati(self.tt3, np.mean(self.eee3), distributio)
+                SSS = SSS + '{}:    {}\n'.format(self.distributions[ij], 1 - self.fx3.distribution.cdf(statcriterion))
+            self.plainText31.setPlainText(SSS)
+            self.pushbutton33.setEnabled(True)
+        else:
+            distributi = getattr(st, self.combobox31.currentText())
+            params = np.ones(distributi.numargs)
+            distributio = distributi(*params)
+            statcriterion = Statistika_qiymati(self.tt3, np.mean(self.eee3), distributio)
+            SSS = '{}:    {}\n'.format(self.combobox31.currentText(), 1 - self.fx3.distribution.cdf(statcriterion))
+            self.plainText31.setPlainText(SSS)
+            self.pushbutton33.setEnabled(True)
 
     def Sensorship(self):
         self.spinbox12.setRange(0, int(0.8 * self.spinbox11.value()))
@@ -125,21 +161,20 @@ class Windows(QMainWindow):
                                                    "Excel file (*.xlsx *.xls)")[0]  # os.getenv('HOME')
                 self.all_data = pd.read_excel(path)
                 self.element1.plot1(self.all_data['T'], np.mean(self.all_data['E']))
-                self.pushbutton22.setEnabled(True)
+                # self.pushbutton22.setEnabled(True)
             elif self.sender() == self.pushbutton31:
                 self.tablevieww = self.tableview3
                 path = QFileDialog.getOpenFileName(self, "Tanlanma faylini yuklash", "",
                                                    "Excel file (*.xlsx *.xls)")[0]  # os.getenv('HOME')
                 self.all_data = pd.read_excel(path)
                 # self.criterion(self.all_data)
-                self.tt = self.all_data["T"].to_numpy()
-                self.eee = self.all_data["E"].to_numpy()
-                self.senzur = len(self.eee) - np.sum(self.eee)
-                self.plainText31.setPlainText("Iltomos, kuting. Limit taqsimot yaratilmoqda...")
-                self.fx = Criterion(self.senzur, len(self.eee))
-                statcriterion = Statistika_qiymati(self.tt, np.mean(self.eee))
-                self.plainText31.setPlainText("Qiymatdorlik darajasi {} ga teng".format(self.fx.distribution.cdf(statcriterion)))
+                self.tt3 = self.all_data["T"].to_numpy()
+                self.eee3 = self.all_data["E"].to_numpy()
+                self.senzur3 = len(self.eee3) - np.sum(self.eee3)
+                self.plainText31.setPlainText("Iltomos, kuting. Tanlanmaga mos limit taqsimot yaratilmoqda...")
+                self.fx3 = Criterion(self.senzur3, len(self.eee3))
                 self.pushbutton32.setEnabled(True)
+                self.plainText31.setPlainText("sss")
             NumRows = len(self.all_data.index)
             self.tablevieww.setColumnCount(len(self.all_data.columns))
             self.tablevieww.setRowCount(NumRows)

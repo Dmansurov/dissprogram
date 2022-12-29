@@ -20,10 +20,10 @@ class Criterion:
         self.T = []
         self.distribution = ''
         TT = np.array([])
-        for c in range(100):
+        for c in range(15000):
             T, pn = self.RandomSample(senzur, n)
             TT = np.append(TT, Statistika_qiymati(T, pn))
-        N = np.histogram((np.sqrt(n / np.log(np.log(n)))) * TT, bins='auto')
+        N = np.histogram(TT, bins='auto')
         self.distribution = rv_histogram(N)
 
     def RandomSample(self, senzur, n):

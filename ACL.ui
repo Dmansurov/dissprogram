@@ -6,9 +6,27 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>970</width>
-    <height>654</height>
+    <width>975</width>
+    <height>615</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>975</width>
+    <height>615</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>975</width>
+    <height>615</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>ACL bahosi uchun dastur</string>
@@ -24,11 +42,11 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
-      <string>Tanlanma olish               </string>
+      <string>Tanlanma olish</string>
      </attribute>
      <widget class="QWidget" name="verticalLayoutWidget">
       <property name="geometry">
@@ -353,7 +371,7 @@
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>70</y>
+        <y>50</y>
         <width>651</width>
         <height>491</height>
        </rect>
@@ -379,6 +397,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="pushButton31">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Tanlanma yuklash</string>
          </property>
@@ -386,6 +410,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="pushButton32">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Kriteryni hisoblash</string>
          </property>
@@ -393,6 +423,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="pushButton33">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Natijalarni saqlash</string>
          </property>
@@ -453,7 +489,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>970</width>
+     <width>975</width>
      <height>24</height>
     </rect>
    </property>
