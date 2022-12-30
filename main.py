@@ -4,9 +4,8 @@ import numpy as np
 import pandas as pd
 import scipy.stats as st
 from PyQt5 import uic
-from PyQt5.QtGui import QTextCursor
-from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidget, QTableWidgetItem, QPushButton, \
-    QFileDialog, QLabel, QComboBox, QDoubleSpinBox, QSpinBox, QMessageBox, QWidget, QPlainTextEdit
+from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidget, QTableWidgetItem, QPushButton, QFileDialog, QLabel, \
+    QComboBox, QDoubleSpinBox, QSpinBox, QMessageBox, QWidget, QPlainTextEdit
 from statsmodels.distributions import ECDF
 
 from Criterion import Criterion, Statistika_qiymati
@@ -120,10 +119,8 @@ class Windows(QMainWindow):
             with open(path3[0], 'w') as yourFile:
                 yourFile.write(str(self.plainText31.toPlainText()))
         except:
-            QMessageBox.warning(self, 'Saqlashdagi xatolik!',
+            QMessageBox.warning(self, "Saqlashdagi xatolik!",
                                 "Natijalarni saqlamadingiz yoki saqlashda xatolikga yo'l qo'ydingiz!")
-
-
 
     def button32(self):
         if self.combobox31.currentText() == 'barchasi':
