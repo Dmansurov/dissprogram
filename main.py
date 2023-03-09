@@ -171,7 +171,7 @@ class Windows(QMainWindow):
                 self.plainText31.setPlainText("Iltomos, kuting. Tanlanmaga mos limit taqsimot yaratilmoqda...")
                 self.fx3 = Criterion(self.senzur3, len(self.eee3))
                 self.pushbutton32.setEnabled(True)
-                self.plainText31.setPlainText("sss")
+                self.plainText31.setPlainText("'Kriteriyni hisoblash' tugmachasini bosing.")
             NumRows = len(self.all_data.index)
             self.tablevieww.setColumnCount(len(self.all_data.columns))
             self.tablevieww.setRowCount(NumRows)
